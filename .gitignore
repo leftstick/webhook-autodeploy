@@ -1,5 +1,6 @@
-# Object file
-*.o
+#npm
+node_modules/
 
-# Ada Library Information
-*.ali
+#worker
+
+workers/
