@@ -9,7 +9,7 @@ const app = express()
 const handler = new Handler(1 * 60 * 1000)
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded())
+app.use(bodyParser.urlencoded({extended: true}))
 
 app.post('/hook', (req, res) => {
 

@@ -1,10 +1,7 @@
 const {exec} = require('child_process')
 const {resolve} = require('path')
-const {promisify} = require('util')
 
 const CWD = process.env.CWD || resolve(__dirname, '..', 'workers')
-
-const execPromise = promisify(exec)
 
 class Hook {
   constructor() {
@@ -13,7 +10,7 @@ class Hook {
     this.nextCallback = null
   }
 
-  async run(params) {
+  run(params) {
     if (this.isRunning) {
       return this.setToNext(async () => {
         await this.run(params)
@@ -22,19 +19,23 @@ class Hook {
 
     this.isRunning = true
 
-    try {
-      const {stderr} = await execPromise('sh gitee_worker.sh', {
-        cwd: CWD
-      })
-      console.log('stderr', stderr)
+    const shell = exec('sh gitee_worker.sh', {
+      cwd: CWD
+    }, async (error, stdout, stderr) => {
+      if (error) {
+        console.error(error)
+      }
+      console.log('Task finished')
       if (this.nextCallback) {
         await this.nextCallback()
         this.nextCallback = null
       }
-    } catch (error) {
-      console.error(error)
-    }
-    this.isRunning = false
+      this.isRunning = false
+    })
+
+    shell.stdout.pipe(process.stdout)
+
+    shell.stderr.pipe(process.stderr)
 
   }
 
