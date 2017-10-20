@@ -7,6 +7,7 @@ class Handler {
   constructor(interval) {
     this.interval = interval
     this.lastBuild = null
+    this.nextBuildId = null
 
     this.hook = new Hook()
   }
@@ -24,9 +25,11 @@ class Handler {
       return this.hook.run(params)
     }
 
-    console.warn('build request comes too often, this one will be queued')
+    console.warn('build request comes too often, and will be executed in ' + now - this.lastBuild + 'ms')
+
+    clearTimeout(this.nextBuildId)
     
-    setTimeout(() => {
+    this.nextBuildId = setTimeout(() => {
       this.lastBuild = new Date()
       this.hook.run(params)
     }, this.interval - (now - this.lastBuild))
