@@ -25,7 +25,7 @@ class Handler {
       return this.hook.run(params)
     }
 
-    console.warn('build request comes too often, and will be executed in ' + now - this.lastBuild + 'ms')
+    console.warn('build request comes too often, and will be executed in ' + (now - this.lastBuild) + 'ms')
 
     clearTimeout(this.nextBuildId)
     
